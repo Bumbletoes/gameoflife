@@ -1,0 +1,35 @@
+{
+  "name": "Thing A Week: Game of Life",
+  "version": "0.0.0",
+  "authors": [
+    "Levi <levimcphetridge@gmail.com>"
+  ],
+  "description": "A javascript implimentation of Conway's Game of Life",
+  "main": "src/js/main.js",
+  "keywords": [
+    "Thing",
+    "a",
+    "week",
+    "Conway's",
+    "Game",
+    "of",
+    "Life",
+    "Javascript",
+    "Canvas"
+  ],
+  "license": "MIT",
+  "homepage": "http://www.levimcphetridge.net/the-falling-of-hawkings-coulton-conway-domino-of-life/",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "jQuery": "~2.1.1",
+    "requirejs": "~2.1.11",
+    "jasmine": "~2.0.0"
+  }
+}
