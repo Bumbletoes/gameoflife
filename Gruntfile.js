@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['src/**/*.js'],
+        src: ['src/**/*.js','bower_components/jQuery/dist/jquery.min.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
