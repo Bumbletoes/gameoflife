@@ -4,23 +4,11 @@
 <title>Game of Life</title>
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <script src="dist/game_of_life.js"></script>
-<script>
-    var tiles = new Array();
-    var tile;
-    for(var i = 0; i < 10; i++){
-        tile = new Tile();
-        tile.setX(Math.random());
-        tile.setY(Math.random());
-        tiles.push(tile);
-    }
-
-    for(var j = 0; j < tiles.length; j++){
-        tiles[j].logPosition();
-    }
-</script>
 </head>
 <body>
     <div id="wrapper">
+        <h1>Game of Life</h1>
+        <canvas id='main-canvas' width='960' height='540'>Your browser does not support the HTML5 canvas tag.</canvas>
     </div>
 </body>
 </html>
