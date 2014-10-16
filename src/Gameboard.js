@@ -29,7 +29,7 @@ Gameboard.prototype.drawBoard = function(){
 			tile.setY(y * tile.getHeight());
 
 			tile.draw();
-			console.log('drawing tile at: ' + x + ',' + y);
+			//console.log('drawing tile at: ' + x + ',' + y);
 		}
 	}
 

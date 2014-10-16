@@ -53,6 +53,6 @@ Tile.prototype.draw = function() {
     this.context.fillStyle = this.activeColor;
     this.context.lineWidth = this.lineWidth;
     this.context.strokeStyle = this.strokeStyle;
-    this.context.fillRect(this.x, this.y, this.width, this.height);
-    this.context.rect(this.x, this.y, this.width, this.height);
+    this.context.strokeRect(this.x, this.y, this.width, this.height);
+    //this.context.rect(this.x, this.y, this.width, this.height);
 };

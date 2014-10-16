@@ -9219,7 +9219,7 @@ Gameboard.prototype.drawBoard = function(){
 			tile.setY(y * tile.getHeight());
 
 			tile.draw();
-			console.log('drawing tile at: ' + x + ',' + y);
+			//console.log('drawing tile at: ' + x + ',' + y);
 		}
 	}
 
@@ -9230,7 +9230,7 @@ Gameboard.prototype.getTileAt = function(x, y){
 	return this.tiles[x][y];
 };;(function(){
     $(document).ready(function(){
-    	var gameboard = new Gameboard(300, 300);
+    	var gameboard = new Gameboard(1000, 1000);
 
     }); 
 })();
@@ -9289,6 +9289,6 @@ Tile.prototype.draw = function() {
     this.context.fillStyle = this.activeColor;
     this.context.lineWidth = this.lineWidth;
     this.context.strokeStyle = this.strokeStyle;
-    this.context.fillRect(this.x, this.y, this.width, this.height);
-    this.context.rect(this.x, this.y, this.width, this.height);
+    this.context.strokeRect(this.x, this.y, this.width, this.height);
+    //this.context.rect(this.x, this.y, this.width, this.height);
 };
