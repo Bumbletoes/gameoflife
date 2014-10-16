@@ -24,6 +24,22 @@ Tile.prototype.setY = function(y) {
     this.y = y;
 };
 
+Tile.prototype.getX = function() {
+  return this.x;
+};
+
+Tile.prototype.getY = function() {
+  return this.y;
+};
+
+Tile.prototype.getHeight = function() {
+  return this.height;
+};
+
+Tile.prototype.getWidth = function() {
+  return this.width;
+};
+
 Tile.prototype.setSize = function(height, width) {
     this.height = height;
     this.width = width;
@@ -39,5 +55,4 @@ Tile.prototype.draw = function() {
     this.context.strokeStyle = this.strokeStyle;
     this.context.fillRect(this.x, this.y, this.width, this.height);
     this.context.rect(this.x, this.y, this.width, this.height);
-    this.context.stroke();
 };
