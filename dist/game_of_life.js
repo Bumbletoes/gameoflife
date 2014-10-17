@@ -9194,8 +9194,9 @@ return jQuery;
 function Gameboard(width, height){
 	var canvas = $('#main-canvas')[0];
     this.context = canvas.getContext('2d');
-    var tile; 
-
+    var tile;
+    var getTileAt = this.getTileAt;
+   
 	this.tiles = [];
 
 	for(var i = 0; i < width; i++){
@@ -9205,6 +9206,13 @@ function Gameboard(width, height){
 			this.tiles[i][j] = tile;
 		}
 	}
+
+	canvas.addEventListener('click', function () {
+		var clickedTile = getTileAt(event.pageX, event.pageY);
+		if(clickedTile){
+			clickedTile.activate();
+		}
+	 }, false);
 
 	this.drawBoard();
 }
@@ -9226,8 +9234,20 @@ Gameboard.prototype.drawBoard = function(){
 	this.context.stroke();
 };
 
-Gameboard.prototype.getTileAt = function(x, y){
-	return this.tiles[x][y];
+Gameboard.prototype.getTileAt = function(clickX,clickY){
+	var tile;
+
+	for(var x = 0; x < this.tiles.length; x++){
+		for(var y = 0; y < this.tiles[x].length; y++){
+			tile = this.tiles[x][y];
+			if((clickX >= tile.x && clickX <= tile.x + tile.getWidth()) && 
+			   (clickY >= tile.y && clickY <= tile.y + tile.getHeight()) ){
+			   	return tile;
+			}
+		}
+	}
+
+	return null;
 };;(function(){
     $(document).ready(function(){
     	var gameboard = new Gameboard(1000, 1000);
@@ -9241,12 +9261,11 @@ Gameboard.prototype.getTileAt = function(x, y){
 // Constructor
 function Tile(context) {
    this.x = 0;
-   this.y = 0;
+   this.y = 0; 
    this.height = 10;
    this.width = 10;
    this.context = context;
    this.lineWidth = 2;
-   this.strokeStyle = '#000000';
    this.aliveColor = '#000000';
    this.deadColor = '#FFFFFF';
    this.activeColor = this.deadColor;
@@ -9286,9 +9305,21 @@ Tile.prototype.logPosition = function() {
 };
 
 Tile.prototype.draw = function() {
-    this.context.fillStyle = this.activeColor;
     this.context.lineWidth = this.lineWidth;
     this.context.strokeStyle = this.strokeStyle;
+    this.context.fillStyle = this.activeColor;
+    this.context.clearRect(this.x, this.y, this.width, this.height);
     this.context.strokeRect(this.x, this.y, this.width, this.height);
+    this.context.fillRect(this.x, this.y, this.width, this.height);
     //this.context.rect(this.x, this.y, this.width, this.height);
+};
+
+Tile.prototype.activate = function() {
+  this.activeColor = this.aliveColor;
+  this.draw();
+};
+
+Tile.prototype.deActivate = function() {
+  this.activeColor = this.deadColor;
+  this.draw();
 };

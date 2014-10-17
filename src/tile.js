@@ -5,12 +5,11 @@
 // Constructor
 function Tile(context) {
    this.x = 0;
-   this.y = 0;
+   this.y = 0; 
    this.height = 10;
    this.width = 10;
    this.context = context;
    this.lineWidth = 2;
-   this.strokeStyle = '#000000';
    this.aliveColor = '#000000';
    this.deadColor = '#FFFFFF';
    this.activeColor = this.deadColor;
@@ -50,9 +49,21 @@ Tile.prototype.logPosition = function() {
 };
 
 Tile.prototype.draw = function() {
-    this.context.fillStyle = this.activeColor;
     this.context.lineWidth = this.lineWidth;
     this.context.strokeStyle = this.strokeStyle;
+    this.context.fillStyle = this.activeColor;
+    this.context.clearRect(this.x, this.y, this.width, this.height);
     this.context.strokeRect(this.x, this.y, this.width, this.height);
+    this.context.fillRect(this.x, this.y, this.width, this.height);
     //this.context.rect(this.x, this.y, this.width, this.height);
+};
+
+Tile.prototype.activate = function() {
+  this.activeColor = this.aliveColor;
+  this.draw();
+};
+
+Tile.prototype.deActivate = function() {
+  this.activeColor = this.deadColor;
+  this.draw();
 };
