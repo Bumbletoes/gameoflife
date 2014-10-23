@@ -9192,7 +9192,6 @@ return jQuery;
  * Handles tile management
  */
 function Gameboard(width, height){
-	
 	var tile;
 
 	// This variable is a reference to the gameboard. It is 
@@ -9204,7 +9203,6 @@ function Gameboard(width, height){
     this.context = this.canvas.getContext('2d');
     this.tiles = [];
     this.aliveTiles = [];
-
 
 	// Keeps double clicking from selecting text on the canvas
 	this.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
@@ -9236,8 +9234,6 @@ function Gameboard(width, height){
 	}
 
 	this.drawBoard();
-
-
 }
 
 Gameboard.prototype.drawBoard = function(){
@@ -9260,7 +9256,7 @@ Gameboard.prototype.drawBoard = function(){
 Gameboard.prototype.getMouse = function(e) {
 	var x = e.pageX - this.canvas.offsetLeft;
 	var y = e.pageY - this.canvas.offsetTop;
-	
+
 	return {x: x, y: y};
 };;(function(){
     $(document).ready(function(){
@@ -9276,8 +9272,8 @@ Gameboard.prototype.getMouse = function(e) {
 function Tile(context) {
    this.x = 0;
    this.y = 0; 
-   this.height = 10;
-   this.width = 10;
+   this.height = 9;
+   this.width = 9;
    this.context = context;
    this.lineWidth = 1;
    this.aliveColor = '#000000';

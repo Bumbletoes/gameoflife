@@ -2,7 +2,6 @@
  * Handles tile management
  */
 function Gameboard(width, height){
-	
 	var tile;
 
 	// This variable is a reference to the gameboard. It is 
@@ -14,7 +13,6 @@ function Gameboard(width, height){
     this.context = this.canvas.getContext('2d');
     this.tiles = [];
     this.aliveTiles = [];
-
 
 	// Keeps double clicking from selecting text on the canvas
 	this.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
@@ -46,8 +44,6 @@ function Gameboard(width, height){
 	}
 
 	this.drawBoard();
-
-
 }
 
 Gameboard.prototype.drawBoard = function(){
@@ -70,6 +66,6 @@ Gameboard.prototype.drawBoard = function(){
 Gameboard.prototype.getMouse = function(e) {
 	var x = e.pageX - this.canvas.offsetLeft;
 	var y = e.pageY - this.canvas.offsetTop;
-	
+
 	return {x: x, y: y};
 };

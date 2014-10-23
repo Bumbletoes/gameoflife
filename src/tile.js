@@ -6,8 +6,8 @@
 function Tile(context) {
    this.x = 0;
    this.y = 0; 
-   this.height = 10;
-   this.width = 10;
+   this.height = 9;
+   this.width = 9;
    this.context = context;
    this.lineWidth = 1;
    this.aliveColor = '#000000';
