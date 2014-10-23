@@ -9192,12 +9192,40 @@ return jQuery;
  * Handles tile management
  */
 function Gameboard(width, height){
-	var canvas = $('#main-canvas')[0];
-    this.context = canvas.getContext('2d');
-    var tile;
-    var getTileAt = this.getTileAt;
-   
-	this.tiles = [];
+	
+	var tile;
+
+	// This variable is a reference to the gameboard. It is 
+	//  needed for click events because when an event handler is fired
+	//  "this" is a reference to the canvas. Not the gameboard!
+	var gameboard = this;
+
+	this.canvas = $('#main-canvas')[0];
+    this.context = this.canvas.getContext('2d');
+    this.tiles = [];
+    this.aliveTiles = [];
+
+
+	// Keeps double clicking from selecting text on the canvas
+	this.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+
+	this.canvas.addEventListener('mousedown', function(e) {
+		var mouse = gameboard.getMouse(e);
+		var tiles = gameboard.tiles;
+	
+		for (var x = 0; x < tiles.length; x++) {
+			for(var y = 0; y < tiles[x].length; y++){
+				if (tiles[x][y].contains(mouse.x, mouse.y)) {
+					if(tiles[x][y].isAlive() === true){
+						tiles[x][y].deActivate();
+					}else{
+						tiles[x][y].activate();
+					}
+					return;
+				}
+			}
+		}
+	}, true);
 
 	for(var i = 0; i < width; i++){
 		this.tiles[i] = [];
@@ -9207,14 +9235,9 @@ function Gameboard(width, height){
 		}
 	}
 
-	canvas.addEventListener('click', function () {
-		var clickedTile = getTileAt(event.pageX, event.pageY);
-		if(clickedTile){
-			clickedTile.activate();
-		}
-	 }, false);
-
 	this.drawBoard();
+
+
 }
 
 Gameboard.prototype.drawBoard = function(){
@@ -9234,20 +9257,11 @@ Gameboard.prototype.drawBoard = function(){
 	this.context.stroke();
 };
 
-Gameboard.prototype.getTileAt = function(clickX,clickY){
-	var tile;
-
-	for(var x = 0; x < this.tiles.length; x++){
-		for(var y = 0; y < this.tiles[x].length; y++){
-			tile = this.tiles[x][y];
-			if((clickX >= tile.x && clickX <= tile.x + tile.getWidth()) && 
-			   (clickY >= tile.y && clickY <= tile.y + tile.getHeight()) ){
-			   	return tile;
-			}
-		}
-	}
-
-	return null;
+Gameboard.prototype.getMouse = function(e) {
+	var x = e.pageX - this.canvas.offsetLeft;
+	var y = e.pageY - this.canvas.offsetTop;
+	
+	return {x: x, y: y};
 };;(function(){
     $(document).ready(function(){
     	var gameboard = new Gameboard(1000, 1000);
@@ -9265,10 +9279,11 @@ function Tile(context) {
    this.height = 10;
    this.width = 10;
    this.context = context;
-   this.lineWidth = 2;
+   this.lineWidth = 1;
    this.aliveColor = '#000000';
    this.deadColor = '#FFFFFF';
    this.activeColor = this.deadColor;
+   this.alive = false;
 }
 
 Tile.prototype.setX = function (x) {
@@ -9288,11 +9303,15 @@ Tile.prototype.getY = function() {
 };
 
 Tile.prototype.getHeight = function() {
-  return this.height;
+  return this.height + this.lineWidth;
 };
 
 Tile.prototype.getWidth = function() {
-  return this.width;
+  return this.width + this.lineWidth;
+};
+
+Tile.prototype.isAlive = function() {
+  return this.alive;
 };
 
 Tile.prototype.setSize = function(height, width) {
@@ -9301,7 +9320,7 @@ Tile.prototype.setSize = function(height, width) {
 };
 
 Tile.prototype.logPosition = function() {
-    console.log('My position is (' + this.x + ',' + this.y + ')');
+    console.log('mouseY position is (' + this.x + ',' + this.y + ')');
 };
 
 Tile.prototype.draw = function() {
@@ -9311,15 +9330,25 @@ Tile.prototype.draw = function() {
     this.context.clearRect(this.x, this.y, this.width, this.height);
     this.context.strokeRect(this.x, this.y, this.width, this.height);
     this.context.fillRect(this.x, this.y, this.width, this.height);
-    //this.context.rect(this.x, this.y, this.width, this.height);
 };
 
 Tile.prototype.activate = function() {
   this.activeColor = this.aliveColor;
   this.draw();
+  this.alive = true;
 };
 
 Tile.prototype.deActivate = function() {
   this.activeColor = this.deadColor;
   this.draw();
+  this.alive = false;
+};
+
+Tile.prototype.contains = function(mouseX, mouseY) {
+  if((this.x <= mouseX) && (this.x + this.width >= mouseX) &&
+    (this.y <= mouseY) && (this.y + this.height >= mouseY)){
+    return true;
+  }
+
+  return false;
 };
