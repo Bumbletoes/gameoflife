@@ -6,6 +6,8 @@
 function Tile(context) {
    this.x = 0;
    this.y = 0; 
+   this.xIndex = 0;
+   this.yIndex = 0;
    this.height = 9;
    this.width = 9;
    this.context = context;
@@ -24,12 +26,20 @@ Tile.prototype.setY = function(y) {
     this.y = y;
 };
 
+Tile.prototype.setXIndex = function(xIndex) {
+  this.xIndex = xIndex;
+};
+
+Tile.prototype.setYIndex = function(yIndex) { 
+  this.yIndex = yIndex;
+};
+
 Tile.prototype.getX = function() {
-  return this.x;
+  return this.xIndex;
 };
 
 Tile.prototype.getY = function() {
-  return this.y;
+  return this.yIndex;
 };
 
 Tile.prototype.getHeight = function() {

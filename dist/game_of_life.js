@@ -9193,31 +9193,42 @@ return jQuery;
  */
 function Gameboard(width, height){
 	var tile;
-
-	// This variable is a reference to the gameboard. It is 
-	//  needed for click events because when an event handler is fired
-	//  "this" is a reference to the canvas. Not the gameboard!
 	var gameboard = this;
 
-	this.canvas = $('#main-canvas')[0];
-    this.context = this.canvas.getContext('2d');
-    this.tiles = [];
-    this.aliveTiles = [];
+	function checkBounds(x, y){
+		return ((x < 0 || x >= gameboard.numHorizontalTiles) || 
+				(y < 0 || y >= gameboard.numVerticalTiles) );
+	}
+	// Trying out a privileged method
+	gameboard.outOfBounds = function(x,y){
+		return checkBounds(x,y);
+	};
+
+	gameboard.canvas = $('#main-canvas')[0];
+    gameboard.context = gameboard.canvas.getContext('2d');
+    gameboard.tiles = [];
+    gameboard.aliveTiles = [];
+    gameboard.numHorizontalTiles = width;
+    gameboard.numVerticalTiles = height;
+    gameboard.clickedTile = null;
 
 	// Keeps double clicking from selecting text on the canvas
-	this.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+	gameboard.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
 
-	this.canvas.addEventListener('mousedown', function(e) {
+	gameboard.canvas.addEventListener('mousedown', function(e) {
 		var mouse = gameboard.getMouse(e);
 		var tiles = gameboard.tiles;
+		var neighbors;
 	
 		for (var x = 0; x < tiles.length; x++) {
 			for(var y = 0; y < tiles[x].length; y++){
 				if (tiles[x][y].contains(mouse.x, mouse.y)) {
+					gameboard.clickedTile = tiles[x][y];
+
 					if(tiles[x][y].isAlive() === true){
-						tiles[x][y].deActivate();
+						gameboard.clickedTile.deActivate();
 					}else{
-						tiles[x][y].activate();
+						gameboard.clickedTile.activate();
 					}
 					return;
 				}
@@ -9226,14 +9237,16 @@ function Gameboard(width, height){
 	}, true);
 
 	for(var i = 0; i < width; i++){
-		this.tiles[i] = [];
+		gameboard.tiles[i] = [];
 		for(var j = 0; j < height; j++){
-			tile = new Tile(this.context);
-			this.tiles[i][j] = tile;
+			tile = new Tile(gameboard.context);
+			tile.setXIndex(i);
+			tile.setYIndex(j);
+			gameboard.tiles[i][j] = tile;
 		}
 	}
 
-	this.drawBoard();
+	gameboard.drawBoard();
 }
 
 Gameboard.prototype.drawBoard = function(){
@@ -9258,10 +9271,93 @@ Gameboard.prototype.getMouse = function(e) {
 	var y = e.pageY - this.canvas.offsetTop;
 
 	return {x: x, y: y};
+};
+
+Gameboard.prototype.getNumHorizontalTiles = function() {
+	return this.numHorizontalTiles;
+};
+
+Gameboard.prototype.getNumVerticalTiles = function() {
+	return this.numVerticalTiles;
+};
+
+Gameboard.prototype.getTileAt = function(x, y) {
+	return this.tiles[x][y];
+};
+
+Gameboard.prototype.getNeighbors = function (tile) {
+	var neighborTiles = [];
+	var x = tile.getX();
+	var y = tile.getY();
+	var currentX = 0;
+	var currentY = 0;
+	var possibleNeighbors = [
+								{x: x - 1, y: y - 1}, // Top Left
+								{x: x,     y: y - 1},     // Top Middle
+								{x: x + 1, y: y - 1}, // Top Right
+								{x: x - 1, y: y},     // Left
+								{x: x + 1, y: y},        // Right
+								{x: x - 1, y: y + 1},    // Bottom Left
+								{x: x,     y: y + 1},     // Bottom
+								{x: x + 1, y: y + 1}  // Bottom Right
+							];
+
+	for(var i = 0; i < possibleNeighbors.length; i++){
+		currentX = possibleNeighbors[i].x;
+		currentY = possibleNeighbors[i].y;
+		if(this.outOfBounds(currentX, currentY) === false){
+			neighborTiles.push(this.getTileAt(currentX, currentY));
+		}
+	}
+
+	return neighborTiles;
 };;(function(){
     $(document).ready(function(){
-    	var gameboard = new Gameboard(1000, 1000);
+    	var gameboard = new Gameboard(96, 54);
+    	var previousTile;
+    	var currentX = 0;
+    	var currentY = 0;
 
+
+    	window.requestAnimFrame = (function(callback) {
+    		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+    		function(callback) {
+    			window.setTimeout(callback, 1000 / 60);
+    		};
+    	})();
+
+    	function animate(){
+/*    		if(previousTile){
+    			previousTile.deActivate();	
+    		}
+
+    		gameboard.getTileAt(currentX, currentY).activate();
+    		previousTile = gameboard.getTileAt(currentX, currentY);
+
+    		if(currentX === gameboard.getNumHorizontalTiles() - 1){
+    			currentX = 0;
+    			currentY++;
+    		}else{
+    			currentX++;
+    		}
+
+    		if(currentY === gameboard.getNumVerticalTiles()){
+    			currentY = 0;
+    			currentX = 0;
+    		}
+    		console.log(currentX, currentY);
+
+    		requestAnimationFrame(function(){
+    			animate();
+    		}); */
+    	}
+    	
+    	// wait one second before starting animation
+    	setTimeout(function() {
+    		var startTime = (new Date()).getTime();
+    		animate();
+    	}, 1000);
+    	
     }); 
 })();
 ;/* 
@@ -9272,6 +9368,8 @@ Gameboard.prototype.getMouse = function(e) {
 function Tile(context) {
    this.x = 0;
    this.y = 0; 
+   this.xIndex = 0;
+   this.yIndex = 0;
    this.height = 9;
    this.width = 9;
    this.context = context;
@@ -9290,12 +9388,20 @@ Tile.prototype.setY = function(y) {
     this.y = y;
 };
 
+Tile.prototype.setXIndex = function(xIndex) {
+  this.xIndex = xIndex;
+};
+
+Tile.prototype.setYIndex = function(yIndex) { 
+  this.yIndex = yIndex;
+};
+
 Tile.prototype.getX = function() {
-  return this.x;
+  return this.xIndex;
 };
 
 Tile.prototype.getY = function() {
-  return this.y;
+  return this.yIndex;
 };
 
 Tile.prototype.getHeight = function() {
