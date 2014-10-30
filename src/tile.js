@@ -19,11 +19,11 @@ function Tile(context) {
 }
 
 Tile.prototype.setX = function (x) {
-    this.x = x;
+    this.x = x + this.lineWidth;
 };
 
 Tile.prototype.setY = function(y) {
-    this.y = y;
+    this.y = y + this.lineWidth;
 };
 
 Tile.prototype.setXIndex = function(xIndex) {
@@ -43,7 +43,7 @@ Tile.prototype.getY = function() {
 };
 
 Tile.prototype.getHeight = function() {
-  return this.height + this.lineWidth;
+  return this.height + this.lineWidth; 
 };
 
 Tile.prototype.getWidth = function() {

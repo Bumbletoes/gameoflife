@@ -9189,6 +9189,44 @@ return jQuery;
 
 }));
 ;/*
+ * Uses the Gameboard class and 
+ * runes the rules of the game
+ * 
+ * Trying something a little different with how I define this class.....
+ */
+var GameOfLife = {}; 
+(function(){
+	// reference to the GameOfLife class for access from inside closures
+	var gameoflife; 
+	GameOfLife = function(config){
+		gameoflife = this;
+		this.init(config);
+	};
+
+	GameOfLife.prototype = {
+		init: function(config){
+			var conf = config || {};
+			var gameboardWidth = conf.width || 10;
+			var gameboardHeight = conf.height || 10;
+			this.gameboard = new Gameboard(gameboardWidth, gameboardHeight);
+
+			window.requestAnimFrame = (function(callback) {
+				return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+				function(callback) {
+					window.setTimeout(callback, 1000 / 60);
+				};
+			})();
+		},
+
+		start: function() {
+			this.enterFrame();
+		},
+
+		enterFrame: function(){
+			requestAnimationFrame(gameoflife.enterFrame);
+		}
+	};	
+ })();;/*
  * Handles tile management
  */
 function Gameboard(width, height){
@@ -9313,54 +9351,10 @@ Gameboard.prototype.getNeighbors = function (tile) {
 	return neighborTiles;
 };;(function(){
     $(document).ready(function(){
-    	var gameboard = new Gameboard(96, 54);
-    	var previousTile;
-    	var currentX = 0;
-    	var currentY = 0;
-
-
-    	window.requestAnimFrame = (function(callback) {
-    		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-    		function(callback) {
-    			window.setTimeout(callback, 1000 / 60);
-    		};
-    	})();
-
-    	function animate(){
-/*    		if(previousTile){
-    			previousTile.deActivate();	
-    		}
-
-    		gameboard.getTileAt(currentX, currentY).activate();
-    		previousTile = gameboard.getTileAt(currentX, currentY);
-
-    		if(currentX === gameboard.getNumHorizontalTiles() - 1){
-    			currentX = 0;
-    			currentY++;
-    		}else{
-    			currentX++;
-    		}
-
-    		if(currentY === gameboard.getNumVerticalTiles()){
-    			currentY = 0;
-    			currentX = 0;
-    		}
-    		console.log(currentX, currentY);
-
-    		requestAnimationFrame(function(){
-    			animate();
-    		}); */
-    	}
-    	
-    	// wait one second before starting animation
-    	setTimeout(function() {
-    		var startTime = (new Date()).getTime();
-    		animate();
-    	}, 1000);
-    	
+    	var game = new GameOfLife({width:96, height:54});
+    	game.start();
     }); 
-})();
-;/* 
+})();;/* 
  * Basic representation of a game tile
  */
 
@@ -9381,11 +9375,11 @@ function Tile(context) {
 }
 
 Tile.prototype.setX = function (x) {
-    this.x = x;
+    this.x = x + this.lineWidth;
 };
 
 Tile.prototype.setY = function(y) {
-    this.y = y;
+    this.y = y + this.lineWidth;
 };
 
 Tile.prototype.setXIndex = function(xIndex) {
@@ -9405,7 +9399,7 @@ Tile.prototype.getY = function() {
 };
 
 Tile.prototype.getHeight = function() {
-  return this.height + this.lineWidth;
+  return this.height + this.lineWidth; 
 };
 
 Tile.prototype.getWidth = function() {

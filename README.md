@@ -6,8 +6,14 @@ Dev environment notes:
 - Run npm install grunt dependencies
 
 Classes:
+GameOfLife
 Tile
 Gameboard
+
+NOTES:
+  I think I really want to take all of the drawing responsibility away from Tile and Gameboard..
+  Maybe build a canvas class or something... I'm not sure quite yet. 
+  It would be nice to be able to plug in different drawing api's and still have the gameboard logic be intact
 
 TODO:
  -- Add Conway's Rules
