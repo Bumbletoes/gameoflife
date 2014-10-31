@@ -11,6 +11,7 @@ var GameOfLife = {};
 	GameOfLife = function(config){
 		gameoflife = this;
 		this.init(config);
+		this.started = false;
 	};
 
 	GameOfLife.prototype = {
@@ -26,14 +27,28 @@ var GameOfLife = {};
 					window.setTimeout(callback, 1000 / 60);
 				};
 			})();
-		},
 
-		start: function() {
 			this.enterFrame();
 		},
 
+		start: function() {
+			this.started = true;
+		},
+
+		stop: function() {
+			this.started = false;
+		},
+
+		reset: function() {
+			this.started = false;
+			this.gameboard.clearBoard();
+		},
+
 		enterFrame: function(){
-			requestAnimationFrame(gameoflife.enterFrame);
+			if(gameoflife.started){
+				console.log('started!');	
+			}
+			requestAnimationFrame(gameoflife.enterFrame);	
 		}
 	};	
  })();

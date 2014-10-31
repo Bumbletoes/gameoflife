@@ -9201,6 +9201,7 @@ var GameOfLife = {};
 	GameOfLife = function(config){
 		gameoflife = this;
 		this.init(config);
+		this.started = false;
 	};
 
 	GameOfLife.prototype = {
@@ -9216,14 +9217,28 @@ var GameOfLife = {};
 					window.setTimeout(callback, 1000 / 60);
 				};
 			})();
-		},
 
-		start: function() {
 			this.enterFrame();
 		},
 
+		start: function() {
+			this.started = true;
+		},
+
+		stop: function() {
+			this.started = false;
+		},
+
+		reset: function() {
+			this.started = false;
+			this.gameboard.clearBoard();
+		},
+
 		enterFrame: function(){
-			requestAnimationFrame(gameoflife.enterFrame);
+			if(gameoflife.started){
+				console.log('started!');	
+			}
+			requestAnimationFrame(gameoflife.enterFrame);	
 		}
 	};	
  })();;/*
@@ -9304,6 +9319,24 @@ Gameboard.prototype.drawBoard = function(){
 	this.context.stroke();
 };
 
+Gameboard.prototype.clearBoard = function(){
+	var tile;
+	
+	for(var x = 0; x < this.tiles.length; x++){
+		for(var y = 0; y < this.tiles[x].length; y++){
+			tile = this.tiles[x][y];
+			tile.setX(x * tile.getWidth());
+			tile.setY(y * tile.getHeight());
+			tile.deActivate();
+
+			tile.draw();
+			//console.log('drawing tile at: ' + x + ',' + y);
+		}
+	}
+
+	this.context.stroke();	
+};
+
 Gameboard.prototype.getMouse = function(e) {
 	var x = e.pageX - this.canvas.offsetLeft;
 	var y = e.pageY - this.canvas.offsetTop;
@@ -9350,9 +9383,16 @@ Gameboard.prototype.getNeighbors = function (tile) {
 
 	return neighborTiles;
 };;(function(){
-    $(document).ready(function(){
-    	var game = new GameOfLife({width:96, height:54});
-    	game.start();
+    $(document).ready(function(){	
+    	var game = new GameOfLife({width:96, height:54});	
+
+    	$('#start-button').click(function(){
+    		game.start();
+    	});
+
+    	$('#reset-button').click(function(){
+    		game.reset();
+    	});
     }); 
 })();;/* 
  * Basic representation of a game tile

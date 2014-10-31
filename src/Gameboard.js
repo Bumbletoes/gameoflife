@@ -76,6 +76,24 @@ Gameboard.prototype.drawBoard = function(){
 	this.context.stroke();
 };
 
+Gameboard.prototype.clearBoard = function(){
+	var tile;
+	
+	for(var x = 0; x < this.tiles.length; x++){
+		for(var y = 0; y < this.tiles[x].length; y++){
+			tile = this.tiles[x][y];
+			tile.setX(x * tile.getWidth());
+			tile.setY(y * tile.getHeight());
+			tile.deActivate();
+
+			tile.draw();
+			//console.log('drawing tile at: ' + x + ',' + y);
+		}
+	}
+
+	this.context.stroke();	
+};
+
 Gameboard.prototype.getMouse = function(e) {
 	var x = e.pageX - this.canvas.offsetLeft;
 	var y = e.pageY - this.canvas.offsetTop;
