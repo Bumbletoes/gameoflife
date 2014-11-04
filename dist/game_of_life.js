@@ -9202,6 +9202,7 @@ var GameOfLife = {};
 		gameoflife = this;
 		this.init(config);
 		this.started = false;
+		this.drawAcorn();
 	};
 
 	GameOfLife.prototype = {
@@ -9223,6 +9224,7 @@ var GameOfLife = {};
 
 		start: function() {
 			this.started = true;
+			gameoflife.calculateBoard();
 		},
 
 		stop: function() {
@@ -9232,13 +9234,108 @@ var GameOfLife = {};
 		reset: function() {
 			this.started = false;
 			this.gameboard.clearBoard();
+			this.drawAcorn();
 		},
 
 		enterFrame: function(){
 			if(gameoflife.started){
-				console.log('started!');	
+				//console.log('started!');
+				gameoflife.calculateBoard();
 			}
 			requestAnimationFrame(gameoflife.enterFrame);	
+		},
+
+		calculateBoard: function() {
+			var tile;
+			var tilesToKill = gameoflife.checkAliveTiles();
+			var tilesToActivate = gameoflife.checkTiles();
+		
+
+			for(var i = 0; i < tilesToKill.length; i++){
+				tile = tilesToKill[i];
+				gameoflife.gameboard.deActivateTileAt(tile.getX(), tile.getY()); 
+			}
+
+			for(var j = 0; j < tilesToActivate.length; j++){
+				tile = tilesToActivate[j];
+				gameoflife.gameboard.activateTileAt(tile.getX(), tile.getY()); 
+			}
+		},
+
+		checkAliveTiles: function() {
+			var aliveTiles = gameoflife.gameboard.aliveTiles;
+			var tile;
+			var neighbors = [];
+			var aliveNeighbors = 0;
+			var tilesToDeactivate = [];
+
+			console.log('checking alive tiles: ' + aliveTiles.length);
+
+			for(var i = 0; i < aliveTiles.length; i++){
+				tile = aliveTiles[i];
+				if(tile.isAlive()){
+					aliveNeighbors++; 
+				}
+
+				neighbors = gameoflife.gameboard.getNeighbors(tile);
+
+				for(var j = 0; j < neighbors.length; j++){
+					if(neighbors[j].isAlive()){
+						aliveNeighbors++;
+					}
+				}
+
+				if(aliveNeighbors < 3 || aliveNeighbors > 3){
+					tilesToDeactivate.push(tile);
+				}
+
+				aliveNeighbors = 0;
+			}
+
+			return tilesToDeactivate;
+		},
+
+		checkTiles: function() {
+			var allTiles = gameoflife.gameboard.allTiles;
+			var tile;
+			var neighbors = [];
+			var aliveNeighbors = 0;
+			var tilesToActivate = [];
+
+			console.log('checking dead tiles: ' + allTiles.length);
+
+			for(var i = 0; i < allTiles.length; i++){
+				tile = allTiles[i];
+				neighbors = gameoflife.gameboard.getNeighbors(tile);
+
+				for(var j = 0; j < neighbors.length; j++){
+					if(neighbors[j].isAlive()){
+						aliveNeighbors++;
+					}
+				}
+
+				if(aliveNeighbors == 3){
+					tilesToActivate.push(tile);
+				}
+
+				aliveNeighbors = 0;
+			}
+
+			return tilesToActivate;
+		},
+
+		drawAcorn: function() {
+			var acornTiles = [{x: 39, y: 16},
+							  {x: 39, y: 18},
+							  {x: 38, y: 18},
+							  {x: 41, y: 17},
+							  {x: 42, y: 18},
+							  {x: 43, y: 18},
+							  {x: 44, y: 18}];
+
+			for(var i = 0; i < acornTiles.length; i++){
+				gameoflife.gameboard.activateTileAt(acornTiles[i].x, acornTiles[i].y);
+			}
 		}
 	};	
  })();;/*
@@ -9261,9 +9358,9 @@ function Gameboard(width, height){
     gameboard.context = gameboard.canvas.getContext('2d');
     gameboard.tiles = [];
     gameboard.aliveTiles = [];
+    gameboard.allTiles = [];
     gameboard.numHorizontalTiles = width;
     gameboard.numVerticalTiles = height;
-    gameboard.clickedTile = null;
 
 	// Keeps double clicking from selecting text on the canvas
 	gameboard.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
@@ -9276,12 +9373,11 @@ function Gameboard(width, height){
 		for (var x = 0; x < tiles.length; x++) {
 			for(var y = 0; y < tiles[x].length; y++){
 				if (tiles[x][y].contains(mouse.x, mouse.y)) {
-					gameboard.clickedTile = tiles[x][y];
 
 					if(tiles[x][y].isAlive() === true){
-						gameboard.clickedTile.deActivate();
+						gameboard.deActivateTileAt(x, y);
 					}else{
-						gameboard.clickedTile.activate();
+						gameboard.activateTileAt(x,y);
 					}
 					return;
 				}
@@ -9289,13 +9385,14 @@ function Gameboard(width, height){
 		}
 	}, true);
 
-	for(var i = 0; i < width; i++){
-		gameboard.tiles[i] = [];
-		for(var j = 0; j < height; j++){
+	for(var x = 0; x < width; x++){
+		gameboard.tiles[x] = [];
+		for(var y = 0; y < height; y++){
 			tile = new Tile(gameboard.context);
-			tile.setXIndex(i);
-			tile.setYIndex(j);
-			gameboard.tiles[i][j] = tile;
+			tile.setXIndex(x);
+			tile.setYIndex(y);
+			gameboard.tiles[x][y] = tile;
+			gameboard.deActivateTileAt(x, y);
 		}
 	}
 
@@ -9327,7 +9424,7 @@ Gameboard.prototype.clearBoard = function(){
 			tile = this.tiles[x][y];
 			tile.setX(x * tile.getWidth());
 			tile.setY(y * tile.getHeight());
-			tile.deActivate();
+			this.deActivateTileAt(x, y);
 
 			tile.draw();
 			//console.log('drawing tile at: ' + x + ',' + y);
@@ -9354,6 +9451,34 @@ Gameboard.prototype.getNumVerticalTiles = function() {
 
 Gameboard.prototype.getTileAt = function(x, y) {
 	return this.tiles[x][y];
+};
+
+Gameboard.prototype.activateTileAt = function(x, y) {
+	var deadTileIndex = this.getTileIndex(this.tiles[x][y], this.allTiles);
+	this.aliveTiles.push(this.tiles[x][y]);
+	this.tiles[x][y].activate();
+};
+
+Gameboard.prototype.deActivateTileAt = function(x, y) {
+	var aliveTileIndex = this.getTileIndex(this.tiles[x][y], this.aliveTiles);
+	
+	if(aliveTileIndex <= -1){
+		this.allTiles.push(this.tiles[x][y]);
+	}else{
+		this.aliveTiles.splice(aliveTileIndex, 1);
+	}
+	
+	this.tiles[x][y].deActivate();
+};
+
+Gameboard.prototype.getTileIndex = function (tile, tileArray) {
+	for(var i = 0; i < tileArray.length; i++){
+		if(tileArray[i] === tile){
+			return i;
+		}
+	}
+
+	return -1;
 };
 
 Gameboard.prototype.getNeighbors = function (tile) {
@@ -9392,6 +9517,10 @@ Gameboard.prototype.getNeighbors = function (tile) {
 
     	$('#reset-button').click(function(){
     		game.reset();
+    	});
+
+    	$('#stop-button').click(function(){
+    		game.stop();
     	});
     }); 
 })();;/* 

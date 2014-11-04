@@ -9,5 +9,9 @@
     	$('#reset-button').click(function(){
     		game.reset();
     	});
+
+    	$('#stop-button').click(function(){
+    		game.stop();
+    	});
     }); 
 })();

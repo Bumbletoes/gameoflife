@@ -12,6 +12,7 @@ var GameOfLife = {};
 		gameoflife = this;
 		this.init(config);
 		this.started = false;
+		this.drawAcorn();
 	};
 
 	GameOfLife.prototype = {
@@ -33,6 +34,7 @@ var GameOfLife = {};
 
 		start: function() {
 			this.started = true;
+			gameoflife.calculateBoard();
 		},
 
 		stop: function() {
@@ -42,13 +44,108 @@ var GameOfLife = {};
 		reset: function() {
 			this.started = false;
 			this.gameboard.clearBoard();
+			this.drawAcorn();
 		},
 
 		enterFrame: function(){
 			if(gameoflife.started){
-				console.log('started!');	
+				//console.log('started!');
+				gameoflife.calculateBoard();
 			}
 			requestAnimationFrame(gameoflife.enterFrame);	
+		},
+
+		calculateBoard: function() {
+			var tile;
+			var tilesToKill = gameoflife.checkAliveTiles();
+			var tilesToActivate = gameoflife.checkTiles();
+		
+
+			for(var i = 0; i < tilesToKill.length; i++){
+				tile = tilesToKill[i];
+				gameoflife.gameboard.deActivateTileAt(tile.getX(), tile.getY()); 
+			}
+
+			for(var j = 0; j < tilesToActivate.length; j++){
+				tile = tilesToActivate[j];
+				gameoflife.gameboard.activateTileAt(tile.getX(), tile.getY()); 
+			}
+		},
+
+		checkAliveTiles: function() {
+			var aliveTiles = gameoflife.gameboard.aliveTiles;
+			var tile;
+			var neighbors = [];
+			var aliveNeighbors = 0;
+			var tilesToDeactivate = [];
+
+			console.log('checking alive tiles: ' + aliveTiles.length);
+
+			for(var i = 0; i < aliveTiles.length; i++){
+				tile = aliveTiles[i];
+				if(tile.isAlive()){
+					aliveNeighbors++; 
+				}
+
+				neighbors = gameoflife.gameboard.getNeighbors(tile);
+
+				for(var j = 0; j < neighbors.length; j++){
+					if(neighbors[j].isAlive()){
+						aliveNeighbors++;
+					}
+				}
+
+				if(aliveNeighbors < 3 || aliveNeighbors > 3){
+					tilesToDeactivate.push(tile);
+				}
+
+				aliveNeighbors = 0;
+			}
+
+			return tilesToDeactivate;
+		},
+
+		checkTiles: function() {
+			var allTiles = gameoflife.gameboard.allTiles;
+			var tile;
+			var neighbors = [];
+			var aliveNeighbors = 0;
+			var tilesToActivate = [];
+
+			console.log('checking dead tiles: ' + allTiles.length);
+
+			for(var i = 0; i < allTiles.length; i++){
+				tile = allTiles[i];
+				neighbors = gameoflife.gameboard.getNeighbors(tile);
+
+				for(var j = 0; j < neighbors.length; j++){
+					if(neighbors[j].isAlive()){
+						aliveNeighbors++;
+					}
+				}
+
+				if(aliveNeighbors == 3){
+					tilesToActivate.push(tile);
+				}
+
+				aliveNeighbors = 0;
+			}
+
+			return tilesToActivate;
+		},
+
+		drawAcorn: function() {
+			var acornTiles = [{x: 39, y: 16},
+							  {x: 39, y: 18},
+							  {x: 38, y: 18},
+							  {x: 41, y: 17},
+							  {x: 42, y: 18},
+							  {x: 43, y: 18},
+							  {x: 44, y: 18}];
+
+			for(var i = 0; i < acornTiles.length; i++){
+				gameoflife.gameboard.activateTileAt(acornTiles[i].x, acornTiles[i].y);
+			}
 		}
 	};	
  })();
