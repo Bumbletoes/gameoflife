@@ -44,7 +44,6 @@ var GameOfLife = {};
 		reset: function() {
 			this.started = false;
 			this.gameboard.clearBoard();
-			this.drawAcorn();
 		},
 
 		enterFrame: function(){
@@ -143,8 +142,54 @@ var GameOfLife = {};
 							  {x: 43, y: 18},
 							  {x: 44, y: 18}];
 
+			gameoflife.reset();
 			for(var i = 0; i < acornTiles.length; i++){
 				gameoflife.gameboard.activateTileAt(acornTiles[i].x, acornTiles[i].y);
+			}
+		},
+
+		drawGun: function() {
+			var gunTiles = [{x: 17, y: 5},
+						    {x: 17, y: 6},
+						    {x: 16, y: 6},
+						    {x: 16, y: 5},
+						    {x: 26, y: 5},
+						    {x: 26, y: 6},
+						    {x: 26, y: 7},
+						    {x: 27, y: 4},
+						    {x: 28, y: 3},
+						    {x: 29, y: 3},
+						    {x: 27, y: 8},
+						    {x: 28, y: 9},
+						    {x: 29, y: 9},
+						    {x: 31, y: 8},
+						    {x: 32, y: 6},
+						    {x: 32, y: 7},
+						    {x: 33, y: 6},
+						    {x: 31, y: 4},
+						    {x: 32, y: 5},
+						    {x: 30, y: 6},
+						    {x: 36, y: 5},
+						    {x: 36, y: 4},
+						    {x: 36, y: 3},
+						    {x: 37, y: 3},
+						    {x: 37, y: 4},
+						    {x: 37, y: 5},
+						    {x: 38, y: 2},
+						    {x: 38, y: 6},
+						    {x: 40, y: 2}, 
+						    {x: 40, y: 1},
+						    {x: 40, y: 6},
+						    {x: 40, y: 7},
+						    {x: 50, y: 3},
+						    {x: 50, y: 4},
+						    {x: 51, y: 4},
+						    {x: 51, y: 3}];
+
+
+			gameoflife.reset();
+			for(var i = 0; i < gunTiles.length; i++){
+				gameoflife.gameboard.activateTileAt(gunTiles[i].x, gunTiles[i].y);
 			}
 		}
 	};	
