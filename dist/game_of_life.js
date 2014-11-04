@@ -9643,7 +9643,7 @@ Tile.prototype.logPosition = function() {
 
 Tile.prototype.draw = function() {
     this.context.lineWidth = this.lineWidth;
-    this.context.strokeStyle = this.strokeStyle;
+    this.context.strokeStyle = '#EEEEEE';
     this.context.fillStyle = this.activeColor;
     this.context.clearRect(this.x, this.y, this.width, this.height);
     this.context.strokeRect(this.x, this.y, this.width, this.height);
