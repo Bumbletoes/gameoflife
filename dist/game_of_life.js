@@ -9554,7 +9554,7 @@ Gameboard.prototype.getNeighbors = function (tile) {
 	return neighborTiles;
 };;(function(){
     $(document).ready(function(){	
-    	var game = new GameOfLife({width:96, height:54});	
+    	var game = new GameOfLife({width:480, height:270});	
 
     	$('#start-button').click(function(){
     		game.start();
@@ -9586,8 +9586,8 @@ function Tile(context) {
    this.y = 0; 
    this.xIndex = 0;
    this.yIndex = 0;
-   this.height = 9;
-   this.width = 9;
+   this.height = 1;
+   this.width = 1;
    this.context = context;
    this.lineWidth = 1;
    this.aliveColor = '#000000';
