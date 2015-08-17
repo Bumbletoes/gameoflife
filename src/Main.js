@@ -1,6 +1,6 @@
 (function(){
     $(document).ready(function(){	
-    	var game = new GameOfLife({width:480, height:270});	
+    	var game = new GameOfLife({width:Config.BOARD_WIDTH, height:Config.BOARD_HEIGHT});	
 
     	$('#start-button').click(function(){
     		game.start();

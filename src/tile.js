@@ -8,12 +8,12 @@ function Tile(context) {
    this.y = 0; 
    this.xIndex = 0;
    this.yIndex = 0;
-   this.height = 1;
-   this.width = 1;
+   this.height = Config.TILE_HEIGHT;
+   this.width = Config.TILE_WIDTH;
    this.context = context;
-   this.lineWidth = 1;
-   this.aliveColor = '#000000';
-   this.deadColor = '#FFFFFF';
+   this.lineWidth = Config.TILE_LINE_SIZE;
+   this.aliveColor = Config.TILE_ALIVE_COLOR;
+   this.deadColor = Config.TILE_DEAD_COLOR;
    this.activeColor = this.deadColor;
    this.alive = false;
 }

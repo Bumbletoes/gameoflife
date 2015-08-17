@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['bower_components/jQuery/dist/jquery.js','src/**/*.js'],
+        src: ['bower_components/jQuery/dist/jquery.js','src/Config.js','src/**/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -21,7 +21,8 @@ module.exports = function(grunt) {
         }
       }
     },
-   jshint: {
+
+    jshint: {
       files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
         // options here to override JSHint defaults
@@ -33,17 +34,49 @@ module.exports = function(grunt) {
         }
       }
     },
-   watch: {
+
+    compass: {                  // Task
+        dist: {                   // Target
+          options: {              // Target options
+            sassDir: 'sass',
+            cssDir: 'css',
+            environment: 'production'
+          }
+        },
+      dev: {                    // Another target
+        options: {
+          sassDir: 'sass',
+          cssDir: 'css'
+        }
+      }
+    },
+
+    connect: {
+      server: {
+        options: {
+          port: 9001
+        }
+      }
+    },
+
+    watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['default']
+      tasks: ['default'],
+      options: {
+        livereload:9001  
+      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
+grunt.loadNpmTasks('grunt-contrib-concat');
+grunt.loadNpmTasks('grunt-contrib-uglify');
+grunt.loadNpmTasks('grunt-contrib-compass');
+grunt.loadNpmTasks('grunt-contrib-jshint');
+grunt.loadNpmTasks('grunt-contrib-connect');
+grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+
+grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'compass']);
+grunt.registerTask('serve', ['concat', 'compass', 'connect', 'watch']);
 
 };

@@ -4,7 +4,7 @@
  * 
  * Trying something a little different with how I define this class.....
  */
-var GameOfLife = {}; 
+
 (function(){
 	// reference to the GameOfLife class for access from inside closures
 	var gameoflife; 
